@@ -1,4 +1,6 @@
+import { Suspense } from "react";
 import { SidebarNav } from "@/components/layout/sidebar-nav";
+import { WhoToFollow } from "@/components/users/who-to-follow";
 import { getCurrentUser } from "@/lib/auth/session";
 
 /** Three-column social layout: navigation, main column, and a widgets sidebar. */
@@ -13,6 +15,9 @@ export default async function MainLayout({ children }: LayoutProps<"/">) {
       <main className="min-w-0 flex-1 border-r border-slate-200 lg:max-w-[600px]">{children}</main>
       <aside className="hidden flex-1 px-6 py-4 lg:block">
         <div className="sticky top-4 space-y-4">
+          <Suspense fallback={<div className="h-48 animate-pulse rounded-2xl bg-slate-50" />}>
+            <WhoToFollow />
+          </Suspense>
           <div className="rounded-2xl bg-slate-50 p-4 text-sm text-slate-600">
             <p className="font-semibold text-slate-900">Welcome to Threadly</p>
             <p className="mt-1">
