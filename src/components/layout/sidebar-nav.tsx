@@ -2,11 +2,18 @@ import Link from "next/link";
 import { AtSign, Bell, Compass, Home, LogOut, User } from "lucide-react";
 import { logout } from "@/app/(auth)/actions";
 import { Avatar } from "@/components/avatar";
+import { UnreadBadge } from "@/components/notifications/unread-badge";
 import { buttonVariants } from "@/components/ui/button";
 import type { SessionUser } from "@/lib/auth/session";
 import { NavLink } from "./nav-link";
 
-export function SidebarNav({ user }: { user: SessionUser | null }) {
+export function SidebarNav({
+  user,
+  unreadCount = 0,
+}: {
+  user: SessionUser | null;
+  unreadCount?: number;
+}) {
   return (
     <div className="flex h-full flex-col justify-between py-4">
       <div className="space-y-1">
@@ -22,7 +29,14 @@ export function SidebarNav({ user }: { user: SessionUser | null }) {
 
         {user && <NavLink href="/home" icon={<Home />} label="Home" />}
         <NavLink href="/explore" icon={<Compass />} label="Explore" />
-        {user && <NavLink href="/notifications" icon={<Bell />} label="Notifications" />}
+        {user && (
+          <NavLink
+            href="/notifications"
+            icon={<Bell />}
+            label="Notifications"
+            badge={<UnreadBadge initial={unreadCount} />}
+          />
+        )}
         {user && <NavLink href={`/${user.username}`} icon={<User />} label="Profile" />}
       </div>
 

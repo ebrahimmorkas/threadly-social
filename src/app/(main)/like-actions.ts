@@ -4,6 +4,7 @@ import { z } from "zod";
 import { getCurrentUser } from "@/lib/auth/session";
 import { getCache } from "@/lib/cache";
 import { setLike } from "@/lib/likes";
+import { notifyLike } from "@/lib/notifications";
 import { rateLimit } from "@/lib/rate-limit";
 
 export type ToggleLikeResult =
@@ -25,6 +26,7 @@ export async function toggleLike(postId: string, liked: boolean): Promise<Toggle
 
   const result = await setLike(user.id, postId, liked);
   if (!result) return { ok: false, error: "not-found" };
+  if (result.changed && result.liked) await notifyLike(user.id, postId, result.authorId);
 
   return { ok: true, liked: result.liked, likeCount: result.likeCount };
 }

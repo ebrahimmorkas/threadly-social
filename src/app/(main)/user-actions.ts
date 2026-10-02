@@ -9,6 +9,7 @@ import { requireUser } from "@/lib/auth/guards";
 import { getCurrentUser } from "@/lib/auth/session";
 import { getCache } from "@/lib/cache";
 import { setFollow } from "@/lib/follows";
+import { notifyFollow } from "@/lib/notifications";
 import { rateLimit } from "@/lib/rate-limit";
 import type { FormState } from "@/lib/validations/auth";
 import { profileSchema } from "@/lib/validations/profile";
@@ -32,6 +33,7 @@ export async function toggleFollow(userId: string, follow: boolean): Promise<Tog
 
   const result = await setFollow(viewer.id, userId, follow);
   if (!result) return { ok: false, error: "not-found" };
+  if (result.changed && result.following) await notifyFollow(viewer.id, userId);
 
   revalidatePath("/home");
   return { ok: true, following: result.following, followersCount: result.followersCount };

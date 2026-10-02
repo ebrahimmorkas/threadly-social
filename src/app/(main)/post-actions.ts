@@ -7,7 +7,8 @@ import { db } from "@/db";
 import { posts, postTags, users } from "@/db/schema";
 import { requireUser } from "@/lib/auth/guards";
 import { getCache } from "@/lib/cache";
-import { extractHashtags } from "@/lib/posts/parse";
+import { notifyPostCreated } from "@/lib/notifications";
+import { extractHashtags, extractMentions } from "@/lib/posts/parse";
 import { rateLimit } from "@/lib/rate-limit";
 import type { FormState } from "@/lib/validations/auth";
 import { postSchema } from "@/lib/validations/post";
@@ -58,6 +59,13 @@ export async function createPost(_prev: FormState, formData: FormData): Promise<
   });
 
   if (!created) return { message: "The post you are replying to no longer exists." };
+
+  await notifyPostCreated({
+    actorId: user.id,
+    postId: created.id,
+    parentId,
+    mentions: extractMentions(content),
+  });
 
   revalidatePath("/home");
   revalidatePath("/explore");
