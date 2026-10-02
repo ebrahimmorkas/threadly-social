@@ -1,5 +1,7 @@
 import { Suspense } from "react";
 import { SidebarNav } from "@/components/layout/sidebar-nav";
+import { SearchBox } from "@/components/search/search-box";
+import { TrendingTags } from "@/components/search/trending-tags";
 import { WhoToFollow } from "@/components/users/who-to-follow";
 import { getCurrentUser } from "@/lib/auth/session";
 import { getUnreadCount } from "@/lib/notifications";
@@ -17,15 +19,13 @@ export default async function MainLayout({ children }: LayoutProps<"/">) {
       <main className="min-w-0 flex-1 border-r border-slate-200 lg:max-w-[600px]">{children}</main>
       <aside className="hidden flex-1 px-6 py-4 lg:block">
         <div className="sticky top-4 space-y-4">
+          <SearchBox />
+          <Suspense fallback={<div className="h-64 animate-pulse rounded-2xl bg-slate-50" />}>
+            <TrendingTags />
+          </Suspense>
           <Suspense fallback={<div className="h-48 animate-pulse rounded-2xl bg-slate-50" />}>
             <WhoToFollow />
           </Suspense>
-          <div className="rounded-2xl bg-slate-50 p-4 text-sm text-slate-600">
-            <p className="font-semibold text-slate-900">Welcome to Threadly</p>
-            <p className="mt-1">
-              Share what&apos;s on your mind and follow the conversations you love.
-            </p>
-          </div>
         </div>
       </aside>
     </div>

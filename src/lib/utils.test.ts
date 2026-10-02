@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { compactNumber, initials, relativeTime } from "./utils";
+import { compactNumber, escapeLike, initials, relativeTime } from "./utils";
 
 describe("compactNumber", () => {
   it("abbreviates large numbers", () => {
@@ -33,5 +33,15 @@ describe("initials", () => {
     expect(initials("Ada Lovelace")).toBe("AL");
     expect(initials("Grace  Brewster Hopper")).toBe("GB");
     expect(initials("plato")).toBe("P");
+  });
+});
+
+describe("escapeLike", () => {
+  it("escapes LIKE wildcards and backslashes", () => {
+    expect(escapeLike(String.raw`100%_done\ `)).toBe(String.raw`100\%\_done\\ `);
+  });
+
+  it("leaves normal text untouched", () => {
+    expect(escapeLike("ada lovelace")).toBe("ada lovelace");
   });
 });

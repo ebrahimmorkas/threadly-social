@@ -76,6 +76,8 @@ export const posts = pgTable(
     index("posts_created_idx").on(t.createdAt.desc(), t.id.desc()),
     index("posts_author_created_idx").on(t.authorId, t.createdAt.desc()),
     index("posts_parent_created_idx").on(t.parentId, t.createdAt),
+    // Full-text search over post content (used with websearch_to_tsquery + ts_rank).
+    index("posts_content_search_idx").using("gin", sql`to_tsvector('english', ${t.content})`),
     check("posts_counts_non_negative", sql`${t.likeCount} >= 0 and ${t.replyCount} >= 0`),
   ],
 );
