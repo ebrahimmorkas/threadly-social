@@ -23,7 +23,8 @@ export type FeedQuery =
   | { kind: "explore" }
   | { kind: "following"; userId: string }
   | { kind: "profile"; authorId: string; replies?: boolean }
-  | { kind: "tag"; tag: string };
+  | { kind: "tag"; tag: string }
+  | { kind: "ids"; ids: string[] };
 
 const parent = aliasedTable(posts, "parent");
 const parentAuthor = aliasedTable(users, "parent_author");
@@ -85,6 +86,8 @@ function feedFilter(query: FeedQuery): SQL | undefined {
         posts.id,
         db.select({ id: postTags.postId }).from(postTags).where(eq(postTags.tag, query.tag)),
       );
+    case "ids":
+      return inArray(posts.id, query.ids);
   }
 }
 

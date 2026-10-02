@@ -45,3 +45,8 @@ export function initials(name: string) {
     .join("")
     .toUpperCase();
 }
+
+/** Escapes LIKE/ILIKE wildcards so user input is matched literally. */
+export function escapeLike(value: string) {
+  return value.replace(/[\\%_]/g, (match) => `\\${match}`);
+}
