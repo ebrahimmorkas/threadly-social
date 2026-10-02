@@ -1,7 +1,9 @@
 {
   "name": "threadly-social",
-  "version": "0.1.0",
+  "version": "1.0.0",
+  "description": "Real-time social network built with Next.js, PostgreSQL, Drizzle ORM, Server-Sent Events and optional Redis.",
   "private": true,
+  "license": "MIT",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
