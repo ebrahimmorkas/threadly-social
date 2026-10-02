@@ -225,6 +225,29 @@ async function main() {
       posts_count     = (select count(*) from posts p where p.author_id = u.id)
   `);
 
+  console.log("Deriving notifications…");
+  // Notifications mirror the seeded activity: likes, replies and follows.
+  await db.execute(sql`
+    insert into notifications (recipient_id, actor_id, type, post_id, created_at, read_at)
+    select p.author_id, l.user_id, 'like', p.id, p.created_at + interval '5 minutes',
+           case when random() < 0.6 then now() end
+    from likes l join posts p on p.id = l.post_id
+    where l.user_id <> p.author_id
+  `);
+  await db.execute(sql`
+    insert into notifications (recipient_id, actor_id, type, post_id, created_at, read_at)
+    select parent.author_id, r.author_id, 'reply', r.id, r.created_at,
+           case when random() < 0.6 then now() end
+    from posts r join posts parent on parent.id = r.parent_id
+    where r.author_id <> parent.author_id
+  `);
+  await db.execute(sql`
+    insert into notifications (recipient_id, actor_id, type, created_at, read_at)
+    select f.following_id, f.follower_id, 'follow', now() - random() * interval '3 days',
+           case when random() < 0.6 then now() end
+    from follows f
+  `);
+
   console.log(
     "\nSeed complete. Log in as @demo (or any seeded user) with password %s",
     DEMO_PASSWORD,
