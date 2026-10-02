@@ -1,6 +1,8 @@
 import Link from "next/link";
+import { redirect } from "next/navigation";
 import { AtSign, Bell, Hash, Heart, MessageCircle, Users } from "lucide-react";
 import { buttonVariants } from "@/components/ui/button";
+import { getCurrentUser } from "@/lib/auth/session";
 
 const features = [
   {
@@ -27,7 +29,9 @@ const features = [
   { icon: AtSign, title: "Mentions", text: "Bring others into the conversation with @mentions." },
 ];
 
-export default function LandingPage() {
+export default async function LandingPage() {
+  if (await getCurrentUser()) redirect("/home");
+
   return (
     <div className="min-h-screen bg-gradient-to-b from-brand-50 to-white">
       <header className="mx-auto flex max-w-6xl items-center justify-between px-4 py-6 sm:px-6">
