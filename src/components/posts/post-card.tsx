@@ -3,12 +3,13 @@
 import { useTransition } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { Heart, MessageCircle, Trash2 } from "lucide-react";
+import { MessageCircle, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import { deletePost } from "@/app/(main)/post-actions";
 import { Avatar } from "@/components/avatar";
 import type { PostView } from "@/lib/queries/posts";
 import { cn, compactNumber, relativeTime } from "@/lib/utils";
+import { LikeButton } from "./like-button";
 import { PostContent } from "./post-content";
 
 export function PostCard({
@@ -96,15 +97,12 @@ export function PostCard({
             {post.replyCount > 0 && compactNumber(post.replyCount)}
           </Link>
 
-          <span className="flex items-center gap-1.5" aria-label={`${post.likeCount} likes`}>
-            <span className="p-1.5">
-              <Heart
-                className={cn("size-[18px]", post.likedByMe && "fill-rose-500 text-rose-500")}
-                aria-hidden
-              />
-            </span>
-            {post.likeCount > 0 && compactNumber(post.likeCount)}
-          </span>
+          <LikeButton
+            postId={post.id}
+            initialLiked={post.likedByMe}
+            initialCount={post.likeCount}
+            signedIn={viewerId !== null}
+          />
 
           {viewerId === post.author.id ? (
             <button

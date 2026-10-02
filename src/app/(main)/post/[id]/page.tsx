@@ -5,6 +5,7 @@ import { z } from "zod";
 import { Avatar } from "@/components/avatar";
 import { PageHeader } from "@/components/layout/page-header";
 import { Composer } from "@/components/posts/composer";
+import { LikeButton } from "@/components/posts/like-button";
 import { PostCard } from "@/components/posts/post-card";
 import { PostContent } from "@/components/posts/post-content";
 import { getCurrentUser } from "@/lib/auth/session";
@@ -82,6 +83,16 @@ export default async function PostPage(props: PageProps<"/post/[id]">) {
           <span>
             <strong className="text-slate-900">{compactNumber(post.likeCount)}</strong> Likes
           </span>
+        </div>
+        <div className="flex border-t border-slate-200 py-1 text-slate-500">
+          <LikeButton
+            key={post.likeCount}
+            postId={post.id}
+            initialLiked={post.likedByMe}
+            initialCount={post.likeCount}
+            signedIn={user !== null}
+            size="lg"
+          />
         </div>
       </article>
 

@@ -4,6 +4,7 @@ import { redirect } from "next/navigation";
 import { eq, or } from "drizzle-orm";
 import { z } from "zod";
 import { db } from "@/db";
+import { PG_UNIQUE_VIOLATION, pgErrorCode } from "@/db/errors";
 import { users } from "@/db/schema";
 import { hashPassword, verifyPassword } from "@/lib/auth/password";
 import { createSession, destroySession } from "@/lib/auth/session";
@@ -92,7 +93,7 @@ export async function register(_prev: FormState, formData: FormData): Promise<Fo
     await createSession(user!.id);
   } catch (error) {
     // Unique violation from a concurrent registration with the same username/email.
-    if ((error as { code?: string }).code === "23505") {
+    if (pgErrorCode(error) === PG_UNIQUE_VIOLATION) {
       return { message: "That username or email was just taken. Please try another.", fields };
     }
     throw error;
