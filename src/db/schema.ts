@@ -68,7 +68,8 @@ export const posts = pgTable(
     parentId: uuid("parent_id").references((): AnyPgColumn => posts.id, { onDelete: "cascade" }),
     likeCount: integer("like_count").notNull().default(0),
     replyCount: integer("reply_count").notNull().default(0),
-    createdAt,
+    // Millisecond precision matches JavaScript dates, so feed cursors compare exactly.
+    createdAt: timestamp("created_at", { withTimezone: true, precision: 3 }).notNull().defaultNow(),
   },
   (t) => [
     // Keyset pagination for feeds orders by (created_at, id).
