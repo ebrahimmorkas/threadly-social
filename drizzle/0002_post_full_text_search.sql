@@ -1,0 +1,1 @@
+CREATE INDEX "posts_content_search_idx" ON "posts" USING gin (to_tsvector('english', "content"));
